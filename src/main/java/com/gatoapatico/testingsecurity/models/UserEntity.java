@@ -2,6 +2,9 @@ package com.gatoapatico.testingsecurity.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class UserEntity {
@@ -10,13 +13,21 @@ public class UserEntity {
     private int id;
     private String name;
     private String password;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+    )
+    private List<Role> roles = new ArrayList<>();
 
     public UserEntity() {
     }
 
-    public UserEntity(String name, String password) {
+    public UserEntity(String name, String password, List<Role> roles) {
         this.name = name;
         this.password = password;
+        this.roles = roles;
     }
 
     public int getId() {
@@ -43,12 +54,21 @@ public class UserEntity {
         this.password = password;
     }
 
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public String toString() {
         return "UserEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
+                ", roles=" + roles +
                 '}';
     }
 }
